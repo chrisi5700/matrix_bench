@@ -37,9 +37,13 @@ function(target_add_sanitizer target)
     endif()
 endfunction()
 
+add_library(MatrixMul
+        src/Matrix/Matrix.cpp
+        src/Matrix/Matrix.hpp)
+target_add_warnings(MatrixMul)
+target_compile_features(MatrixMul PUBLIC cxx_std_23)
+target_include_directories(MatrixMul PUBLIC src)
 
-
-add_subdirectory(src)
 add_subdirectory(playground)
 add_subdirectory(bench)
 add_subdirectory(tests)

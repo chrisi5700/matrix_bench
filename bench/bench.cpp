@@ -5,28 +5,39 @@
 #include <benchmark/benchmark.h>
 #include <vector>
 #include <numeric>
+#include <Matrix/Matrix.hpp>
 
-// A function to sum elements in a vector
-int sumVector(const std::vector<int>& v) {
-    return std::accumulate(v.begin(), v.end(), 0);
+
+
+static void BM_MatMul_ijk(benchmark::State& state)
+{
+	Matrix mat1{1000, 750};
+	Matrix mat2{750, 2500};
+	for (auto _ : state) {
+		auto mat = multiply_ijk(mat1, mat2); // Perform the sum and prevent optimization
+	}
 }
-
-// Benchmark for summing a vector
-static void BM_SumVector(benchmark::State& state) {
-    // Create a vector with the size provided by the benchmark state
-    std::vector<int> v(state.range(0), 1); // Vector of 1's of size range(0)
-
-    // Loop over each state iteration (measures performance over multiple runs)
-    for (auto _ : state) {
-        benchmark::DoNotOptimize(sumVector(v)); // Perform the sum and prevent optimization
-    }
-
-    // Set the number of processed elements for more meaningful stats
-    state.SetItemsProcessed(state.iterations() * state.range(0));
+static void BM_MatMul_ikj(benchmark::State& state)
+{
+	Matrix mat1{1000, 750};
+	Matrix mat2{750, 2500};
+	for (auto _ : state) {
+		auto mat = multiply_ikj(mat1, mat2); // Perform the sum and prevent optimization
+	}
+}
+static void BM_MatMul_kij(benchmark::State& state)
+{
+	Matrix mat1{1000, 750};
+	Matrix mat2{750, 2500};
+	for (auto _ : state) {
+		auto mat = multiply_kij(mat1, mat2); // Perform the sum an prevent optimization
+	}
 }
 
 // Register the function as a benchmark and set a range of input sizes
-BENCHMARK(BM_SumVector)->Range(8, 8<<10); // Benchmark on input sizes from 8 to 8192
+BENCHMARK(BM_MatMul_ijk)->Unit(benchmark::kMillisecond);
+BENCHMARK(BM_MatMul_ikj)->Unit(benchmark::kMillisecond);
+BENCHMARK(BM_MatMul_kij)->Unit(benchmark::kMillisecond);
 
 // Main function to run the benchmarks
 BENCHMARK_MAIN();
